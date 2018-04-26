@@ -13,10 +13,10 @@ serialPort = '/dev/ttyUSB0'
 baud = 1000000
 
 # number of points to view
-windowSize = 800
+windowSize = 100
 
 # number of data to plot (not including x)
-nData = 1;
+nData = 2;
 
 # allow custom labels for data
 useCustomLabels = False
@@ -27,6 +27,10 @@ customLabels = ['poney1', 'poney2']
 # if true, use first input from serial as x axis, else just plot it
 firstInputAsX = True
 
+# y auto resize. If autoResizeY set to False, please give minY < maxY
+autoResizeY = False
+minY = 0
+maxY = 1000
 
 
 ######  END SETTINGS
@@ -127,14 +131,23 @@ while True:
 				lines[i].set_xdata(x)			
 
 	end = time.time()
-	#	print(1000*(end - start))
-#		print(x[x.size-1])
-	# plot
-	if 1000*(end-lastDisplay):
-		lastDisplay = time.time()
-		ax.relim()
-		ax.autoscale_view(True,True,True)
-		fig.canvas.draw()
-		fig.canvas.flush_events()
+
+	lastDisplay = time.time()
+	
+	
+	ax.autoscale_view(True,x.size < windowSize,autoResizeY)
+	if not autoResizeY:
+		ax.set_ylim(minY, maxY)
+		
+	if x.size < windowSize :
+		if x.size > 5:
+			ax.set_xlim(0, (x[4]-x[3])*windowSize)
+	else:
+		ax.set_xlim(x[x.size-windowSize], x[x.size-1], True, True)
+	
+	
+	ax.relim()
+	fig.canvas.draw()
+	fig.canvas.flush_events()
 		
 	

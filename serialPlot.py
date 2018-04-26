@@ -28,10 +28,14 @@ customLabels = ['poney1', 'poney2']
 firstInputAsX = True
 
 # y auto resize. If autoResizeY set to False, please give minY < maxY
-autoResizeY = False
+autoResizeY = True
 minY = 0
-maxY = 1000
+maxY = 100
 
+
+# just used to estimate the x interval to display at the beginning
+# dt is ~ the time expected between 2 points.
+dt = 0.100 
 
 ######  END SETTINGS
 
@@ -140,8 +144,11 @@ while True:
 		ax.set_ylim(minY, maxY)
 		
 	if x.size < windowSize :
-		if x.size > 5:
-			ax.set_xlim(0, (x[4]-x[3])*windowSize)
+		if firstInputAsX:
+			ax.set_xlim(0, dt*windowSize)
+		else:
+			ax.set_xlim(0, windowSize)
+			
 	else:
 		ax.set_xlim(x[x.size-windowSize], x[x.size-1], True, True)
 	

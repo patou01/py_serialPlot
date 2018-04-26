@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 import StringIO
 import serial
-import io
 import time
+import platform
 
 
 #### SETTINGS 
@@ -39,6 +40,11 @@ dt = 0.100
 
 ######  END SETTINGS
 
+
+print("Using python: " + platform.python_version())
+print("Using numpi: " + np.__version__)
+print("Using matplotlib: " + matplotlib.__version__)
+print("Serial: " + serial.VERSION)
 
 ser = serial.Serial(serialPort, baud)
 
@@ -91,7 +97,6 @@ else:
 	ax.legend(dNames[intX:len(dNames)])
 
 
-print('begin while loop')
 lastDisplay = time.time()
 while True:
 	start = time.time()

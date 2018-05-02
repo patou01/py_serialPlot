@@ -25,7 +25,7 @@ nData = 2;
 separatePlots = False
 
 # allow custom labels for data
-useCustomLabels = False
+useCustomLabels = True
 # if using custom labels, you are responsible for having as many entries as nData
 customLabels = ['poney1', 'poney2'] 
 
@@ -100,10 +100,13 @@ for i in range(0, nData):
 
 
 # add labels
+ax.legend()
+
 if useCustomLabels:
-	ax.legend(customLabels)
+	ax.legend(customLabels, bbox_to_anchor=(0,1.1), loc="upper left", ncol=nData)
 else:
-	ax.legend(dNames[intX:len(dNames)])
+	ax.legend(dNames[intX:len(dNames)],bbox_to_anchor=(0,1.1), loc="upper left", ncol=nData)
+
 
 
 lastDisplay = time.time()

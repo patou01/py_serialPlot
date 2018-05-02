@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib
 import numpy as np
-import StringIO
+from io import BytesIO
 import serial
 import time
 import platform
@@ -11,13 +11,18 @@ import platform
 
 # serial port
 serialPort = '/dev/ttyUSB0'
-baud = 1000000
+baud = 115200
 
 # number of points to view
-windowSize = 100
+windowSize = 50
 
 # number of data to plot (not including x)
 nData = 2;
+
+
+# if separatePlots is True, each set is plotted on a different subplot
+# all subplots have same X however.
+separatePlots = False
 
 # allow custom labels for data
 useCustomLabels = False
@@ -27,6 +32,12 @@ customLabels = ['poney1', 'poney2']
 
 # if true, use first input from serial as x axis, else just plot it
 firstInputAsX = True
+# Only used to estimate the x interval to display at the beginning
+# dt is ~ the time expected between 2 points. 
+# Only used when firstInputAsX is True
+dt = 0.0100 
+
+
 
 # y auto resize. If autoResizeY set to False, please give minY < maxY
 autoResizeY = True
@@ -34,9 +45,7 @@ minY = 0
 maxY = 100
 
 
-# just used to estimate the x interval to display at the beginning
-# dt is ~ the time expected between 2 points.
-dt = 0.100 
+
 
 ######  END SETTINGS
 
@@ -44,13 +53,14 @@ dt = 0.100
 print("Using python: " + platform.python_version())
 print("Using numpi: " + np.__version__)
 print("Using matplotlib: " + matplotlib.__version__)
-print("Serial: " + serial.VERSION)
+print("Serial: " + serial.__version__)
 
 ser = serial.Serial(serialPort, baud)
 
 x = np.array([0.0])
 y = np.zeros(shape=(1,nData))
 lines = []
+ax = []
 
 intX = int(firstInputAsX)
 
@@ -68,8 +78,6 @@ for i in range(int(not firstInputAsX), nData):
 	dNames = np.append(dNames, 'y' + str(i))
 
 
-print dataNames
-print dNames
 
 # dataTypes for parsing serial line
 dataTypes = []
@@ -80,6 +88,7 @@ for i in range(0, intX+nData): # 1+ because of x input
 # make figure
 plt.ion()
 fig = plt.figure()
+
 ax = fig.add_subplot(111)
 ax.set_autoscale_on(True)
 ax.autoscale_view(True,True,True)
@@ -105,7 +114,7 @@ while True:
 	while ser.inWaiting():
 		
 		line = ser.readline()
-		f = StringIO.StringIO(line)
+		f = BytesIO(line)
 		data = np.genfromtxt(f, names = dataNames, dtype = dataTypes)
 		
 		

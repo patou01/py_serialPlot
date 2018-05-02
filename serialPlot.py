@@ -100,8 +100,6 @@ for i in range(0, nData):
 
 
 # add labels
-ax.legend()
-
 if useCustomLabels:
 	ax.legend(customLabels, bbox_to_anchor=(0,1.1), loc="upper left", ncol=nData)
 else:

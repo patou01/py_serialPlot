@@ -13,8 +13,8 @@ from io import BytesIO
 #### SETTINGS 
 
 # serial port
-serialPort = '/dev/ttyUSB0'
-baud = 9600
+serialPort = 'COM4'
+baud = 921600
 
 # number of points to view
 windowSize = 300
@@ -33,7 +33,7 @@ customLabels = ['Avg', 'Fast', 'Slow', 'Min', 'Max']
 
 
 # if true, use first input from serial as x axis, else just plot it
-firstInputAsX = False
+firstInputAsX = True
 # Only used to estimate the x interval to display at the beginning
 # dt is ~ the time expected between 2 points. 
 # Only used when firstInputAsX is True
@@ -41,8 +41,8 @@ dt = 1
 
 # y auto resize. If autoResizeY set to False, please give minY < maxY
 autoResizeY = False
-minY = 30
-maxY = 90
+minY = -2
+maxY = 2
 
 
 ######  END SETTINGS

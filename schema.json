@@ -1,0 +1,22 @@
+{
+	"type" : "object",
+	"properties" : {	
+		"port" : {"type": "string"},
+		"baud" : {"type": "number"},
+		"nInputs" : {"type": "number"},
+		"firstInputAsX" : {"type": "boolean"},
+		"dt" : {"type": "number"},
+		"windowSize" : {"type": "number"},
+		"useCustomLabels" : {"type": "boolean"},
+		"dataLabels" : {"type": "array",
+						"items": {
+							"type": "string"
+							}
+						},
+		"autoSizeY" : {"type": "boolean"},
+		"yMin" : {"type": "number"},
+		"yMax" : {"type": "number"},
+		"testPort" : {"type": "string"},
+		"displayRate" : {"type": "number"}
+	}
+}

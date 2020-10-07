@@ -107,7 +107,7 @@ def main():
 				fig.canvas.draw()
 				fig.canvas.flush_events()
 			
-			time.sleep(0.5*dt)
+			time.sleep(0.7*displayTime)
 
 if __name__ == '__main__':
 	main()

@@ -11,7 +11,7 @@ settingsFile = 'settings.json'
 schema = 'schema.json'
 
 def main():
-	run = True
+	
 
 	with open(settingsFile, 'r') as f, open(schema, 'r') as ref:
 		settings = json.load(f)
@@ -30,6 +30,7 @@ def main():
 		for j in range(0,nData):
 			points.append(0)
 			
+		run = True
 		while run:
 			for j in range(0,nData):
 				points[j] = round(math.sin((j+1)*i*dt),2)

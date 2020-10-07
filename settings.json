@@ -2,14 +2,14 @@
 	"port" : "COM3",
 	"baud" : 921600,
 	"nInputs" : 5,
-	"firstInputAsX" : false,
+	"firstInputAsX" : true,
 	"dt" : 0.001,
 	"windowSize" : 5000,
 	"useCustomLabels" : true,
-	"dataLabels" : [ "sinx", "sin2x", "sin3x", "sin4x", "sin5x", "sin6x"],
+	"dataLabels" : [ "sinx", "sin2x", "sin3x", "sin4x", "sin5x"],
 	"autoSizeY" : false,
-	"yMin" : -1,
-	"yMax" : 1,
+	"yMin" : -2,
+	"yMax" : 2,
 	"testPort" : "COM4",
 	"displayRate" : 30
 }

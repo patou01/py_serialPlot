@@ -5,23 +5,53 @@ import time
 import sys
 import json
 import jsonschema
+import tkinter
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg, NavigationToolbar2Tk)
+	
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.figure import Figure
+
 
 settingsFile = 'settings.json'
 schema = 'schema.json'
 run = True
 
-def main():
-	with open(settingsFile, 'r') as f, open(schema, 'r') as ref:
-		settings = json.load(f)
-		refSettings = json.load(ref)
-		jsonschema.validate(settings, refSettings)
+
+
+class App(tkinter.frame):
+	def __init__(self):
+		self.settings = readSettings(settingsFile, schema)
+		root = tkinter.Tk()
 		
-	nPoints = 0
-	x = np.array([0.0])
-	y = np.zeros(shape=(1,settings['nInputs']))
-	displayTime = 1.0/settings['displayRate']
+		self.nPoints = 0
+		self.x = np.array([0.0])
+		self.y = np.zeros(shape=(1,self.settings['nInputs']))
+		self.displayTime = 1.0/self.settings['displayRate']
+		
+		
+	def addButtons(self):
+		button = tkinter.Button(master=self.root, text="Quit", command=_quit)
+		button.pack(side=tkinter.BOTTOM)
 	
+		reset = tkinter.Button(master=self.root, text="Reset", command=_reset)
+		reset.pack(side=tkinter.BOTTOM)
+	
+	
+	def readSettings(self, settingsFile, schema):
+		def readSettings(settingsFile, schema):
+		with open(settingsFile, 'r') as f, open(schema, 'r') as ref:
+			settings = json.load(f)
+			refSettings = json.load(ref)
+			jsonschema.validate(settings, refSettings)
+			return settings
+		return {}
+
+def main():	
 	labels = makeLabels(settings['useCustomLabels'], settings['nInputs'], settings['dataLabels'])
+	
+	root.wm_title("Embedding in Tk")
+	gui = App(master=root)
 	
 	# get initial value for right side of the plot.
 	if settings['firstInputAsX']:
@@ -31,7 +61,17 @@ def main():
 	
 	fig, ax, lines = makePlot(labels, xMax, settings['autoSizeY'], \
 								settings['yMin'], settings['yMax'])
-
+								
+	canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
+	canvas.draw()
+	canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
+								
+	#toolbar = NavigationToolbar2Tk(canvas, root)
+	#toolbar.update()
+	canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)							
+	
+	addButtons(root)
+	
 	with serial.Serial(settings['port'], settings['baud']) as ser:
 		lastDisplay = time.time()
 		while run:
@@ -46,7 +86,10 @@ def main():
 				lastDisplay = t	
 				fig, ax, lines = updatePlot(fig, ax, lines, x, y, settings['windowSize'], \
 											settings['autoSizeY'])
-			
+				#canvas.draw()
+				
+			root.update_idletasks()
+			root.update()
 			time.sleep(0.7*displayTime)
 
 
@@ -67,7 +110,11 @@ def readSerial(x, y, line, appendData, firstInputAsX, nPoints):
 		y[-1] = np.array(inputs[int(firstInputAsX):])
 		
 	return x, y, nPoints
-	
+
+def _reset():
+	print("reset")
+
+
 
 # makes array of labels, truncates if there's too many custom labels.
 def makeLabels(useCustom, nData, customLabels):
@@ -100,10 +147,8 @@ def updatePlot(fig, ax,lines, x, y, windowSize, autoResizeY):
 
 
 def makePlot(labels, xMax, autoResizeY, minY=-1, maxY=1):
-	plt.ion()
 	fig = plt.figure()
-	fig.canvas.mpl_connect('close_event', figureClosed)
-	
+
 	ax = fig.add_subplot(111)
 	ax.autoscale_view(tight=True,scalex=False, scaley=autoResizeY)
 
@@ -126,6 +171,12 @@ def figureClosed(evt):
 	global run
 	run = False
 
+def _quit():
+	global root
+	root.quit()     # stops mainloop
+	root.destroy()  # this is necessary on Windows to prevent
+                    # Fatal Python Error: PyEval_RestoreThread: NULL tstate
+	
 
 if __name__ == '__main__':
 	main()
